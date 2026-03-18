@@ -1,0 +1,34 @@
+{% extends "base.html" %} {% block title %}ゲームA 説明{% endblock %} {% block
+body_class %}center{% endblock %} {% block head_extra %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/game_a_description.css') }}"
+/>
+{% endblock %} {% block content %}
+
+<div id="three-container"></div>
+
+<div class="center-ui">
+  <h2>ソート可視化</h2>
+
+  <p>
+    6種類のソートアルゴリズムを実行できます。<br />
+    処理の違い・速度の違いを観察してください。
+  </p>
+
+  <button
+    class="btn small"
+    onclick="location.href = '/game-a-Description/start'"
+  >
+    開始
+  </button>
+
+  <button class="btn small" onclick="location.href = '/select'">戻る</button>
+</div>
+
+{% endblock %} {% block scripts %}
+<script
+  type="module"
+  src="{{ url_for('static', filename='js/game_a_description.js') }}"
+></script>
+{% endblock %}

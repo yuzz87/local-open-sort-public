@@ -1,0 +1,604 @@
+/* ======================================================
+   1. ページ見出し
+====================================================== */
+
+.game-b-header {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.game-b-header h2 {
+  margin: 0 0 12px;
+  color: #f8fafc;
+}
+
+.desc {
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.7;
+  color: #cbd5e1;
+}
+
+/* ======================================================
+   2. 花火
+====================================================== */
+
+#fireworks-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: transparent;
+}
+
+/* ======================================================
+   3. アコーディオン共通
+====================================================== */
+
+.howto-accordion,
+.records-accordion {
+  max-width: 960px;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.72);
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+}
+
+.howto-accordion {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  z-index: 1000;
+}
+
+.records-accordion {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  z-index: 1000;
+
+  /* 開いたときに画面内に収める */
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+}
+
+.howto-header,
+.records-header {
+  width: 100%;
+  border: none;
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.records-header {
+  flex-shrink: 0;
+}
+
+.howto-header:hover,
+.records-header:hover {
+  background: #334155;
+}
+
+.howto-content,
+.records-content {
+  display: none;
+  padding: 16px 18px 18px;
+  background: rgba(15, 23, 42, 0.92);
+}
+
+.howto-accordion.active .howto-content {
+  display: block;
+}
+
+.records-accordion.active .records-content {
+  display: grid;
+}
+
+.howto-content ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #e2e8f0;
+  line-height: 1.8;
+}
+
+/* ======================================================
+   4. records-accordion 専用
+====================================================== */
+
+.records-content {
+  grid-template-columns: 1fr;
+  gap: 18px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.records-section {
+  border: 1px solid #334155;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.7);
+  padding: 14px;
+}
+
+.records-section h3 {
+  margin: 0 0 12px;
+  color: #f8fafc;
+  font-size: 16px;
+}
+
+#statistics,
+#battleHistory {
+  color: #e2e8f0;
+  line-height: 1.7;
+}
+
+/* ======================================================
+   5. 認証パネル
+====================================================== */
+
+.auth-panel {
+  max-width: 960px;
+  margin: 18px auto;
+  padding: 18px;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.auth-status {
+  margin: 0 0 12px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.login-link,
+.logout-btn,
+.save-btn,
+.guest-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid #475569;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.12s ease;
+}
+
+.login-link {
+  background: #2563eb;
+  color: #eff6ff;
+  border-color: #2563eb;
+}
+
+.login-link:hover {
+  background: #1d4ed8;
+}
+
+.logout-btn {
+  background: #334155;
+  color: #f8fafc;
+}
+
+.logout-btn:hover {
+  background: #475569;
+}
+
+.save-btn {
+  background: #059669;
+  color: #ecfdf5;
+  border-color: #059669;
+}
+
+.save-btn:hover {
+  background: #047857;
+}
+
+.guest-btn {
+  background: #7c3aed;
+  color: #f5f3ff;
+  border-color: #7c3aed;
+}
+
+.guest-btn:hover {
+  background: #6d28d9;
+}
+
+.logout-btn:active,
+.save-btn:active,
+.guest-btn:active,
+.login-link:active {
+  transform: translateY(1px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.save-message {
+  min-height: 24px;
+  margin: 12px 0 0;
+  font-weight: 700;
+}
+
+.guest-message {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.message-normal {
+  color: #e2e8f0;
+}
+
+.message-success {
+  color: #86efac;
+}
+
+.message-error {
+  color: #fca5a5;
+}
+
+/* ======================================================
+   6. 予想パネル
+====================================================== */
+
+.prediction-panel {
+  max-width: 960px;
+  margin: 18px auto;
+  padding: 20px;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.prediction-panel h3 {
+  margin: 0 0 14px;
+  text-align: center;
+  color: #f8fafc;
+}
+
+.rank-slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.slot {
+  min-height: 72px;
+  padding: 12px;
+  border: 2px dashed #64748b;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.75);
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+}
+
+.algo-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.algo-card {
+  min-width: 110px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  text-align: center;
+  cursor: grab;
+  user-select: none;
+  font-weight: 700;
+  transition:
+    transform 0.15s ease,
+    background 0.2s ease;
+}
+
+.algo-card:hover {
+  background: #475569;
+}
+
+.algo-card:active {
+  cursor: grabbing;
+}
+
+.algo-card.dropped {
+  transform: scale(1.05);
+}
+
+.prediction-result {
+  margin-top: 16px;
+  min-height: 48px;
+  text-align: center;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.prediction-result .message-normal {
+  color: #e2e8f0;
+}
+
+.prediction-result .message-success {
+  color: #fde68a;
+}
+
+.prediction-result .message-error {
+  color: #fca5a5;
+}
+
+/* ======================================================
+   7. バトルカード
+====================================================== */
+
+.battle-grid {
+  max-width: 960px;
+  margin: 24px auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.battle-card {
+  position: relative;
+  min-height: 270px;
+  padding: 16px 16px 44px;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+  overflow: hidden;
+}
+
+.battle-title {
+  margin-bottom: 12px;
+  text-align: center;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.mini-board {
+  position: relative;
+  height: 200px;
+  margin: 0 auto;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.72);
+  overflow: hidden;
+}
+
+.mini-bar {
+  position: absolute;
+  bottom: 0;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+}
+
+.time-label {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  text-align: center;
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.rank-1 {
+  box-shadow: 0 0 0 2px #facc15 inset, 0 8px 24px rgba(250, 204, 21, 0.16);
+}
+
+.rank-2 {
+  box-shadow: 0 0 0 2px #cbd5e1 inset, 0 8px 24px rgba(203, 213, 225, 0.14);
+}
+
+.rank-3 {
+  box-shadow: 0 0 0 2px #fb923c inset, 0 8px 24px rgba(251, 146, 60, 0.14);
+}
+
+/* ======================================================
+   8. 下部操作ボタン
+====================================================== */
+
+.controls-center {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px auto 12px;
+}
+
+.controls-center button {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.12s ease;
+}
+
+.controls-center button:hover {
+  background: #475569;
+}
+
+.controls-center button:active {
+  transform: translateY(1px);
+}
+
+.controls-center button:disabled,
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ======================================================
+   9. 統計表示
+====================================================== */
+
+.stats-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid #334155;
+}
+
+.stats-item + .stats-item {
+  margin-top: 10px;
+}
+
+.stats-line {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.stats-ranks {
+  margin-top: 6px;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ======================================================
+   10. 履歴表示
+====================================================== */
+
+.history-item {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid #334155;
+}
+
+.history-item + .history-item {
+  margin-top: 12px;
+}
+
+.history-title {
+  color: #f8fafc;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.history-meta {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.history-results {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #e2e8f0;
+}
+
+.history-results li + li {
+  margin-top: 4px;
+}
+
+/* ======================================================
+   11. レスポンシブ
+====================================================== */
+
+@media (max-width: 900px) {
+  .battle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rank-slots {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .login-link,
+  .logout-btn,
+  .save-btn,
+  .guest-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-b-header,
+  .auth-panel,
+  .prediction-panel {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  .howto-accordion,
+  .records-accordion {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .howto-accordion {
+    top: 12px;
+    left: 12px;
+  }
+
+  .records-accordion {
+    top: 12px;
+    right: 12px;
+    max-height: calc(100vh - 24px);
+  }
+
+  .battle-card {
+    min-height: 240px;
+  }
+
+  .mini-board {
+    height: 170px;
+  }
+
+  .controls-center {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  .controls-center button {
+    width: 100%;
+  }
+}

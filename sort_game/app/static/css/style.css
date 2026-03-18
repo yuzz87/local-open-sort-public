@@ -1,0 +1,338 @@
+/* ======================================================
+   1. 基本設定 / 白フラッシュ対策
+====================================================== */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+body {
+  font-family: sans-serif;
+  animation: pageFadeIn 0.18s ease;
+}
+
+/* base.html の #app-root を想定 */
+#app-root {
+  min-height: 100vh;
+  background: #0f172a;
+}
+
+/* 共通リンク */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  padding: 10px 18px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* フェード */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0.96;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ======================================================
+   2. センターページ（タイトル等）
+====================================================== */
+
+.center {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(255, 255, 255, 0.12),
+      transparent 40%
+    ),
+    linear-gradient(135deg, #667eea, #764ba2);
+
+  background-attachment: fixed;
+  color: #fff;
+}
+
+/* タイトル */
+.center h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: 0.125rem;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+/* ページタイトル */
+.center h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.625rem;
+}
+
+/* 説明文 */
+.center p {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  max-width: 80vw;
+  text-align: center;
+}
+
+.menu {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* ======================================================
+   3. ページ共通レイアウト
+====================================================== */
+
+.visualizer-page {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 18px 60px;
+  box-sizing: border-box;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* 白背景のチラ見え防止 */
+main {
+  background: transparent;
+}
+
+/* ======================================================
+   4. 2カラムレイアウト
+====================================================== */
+
+.two-column {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.left-panel {
+  flex: 7;
+  min-width: 0;
+}
+
+.right-panel {
+  flex: 3;
+  min-width: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  padding-left: 16px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* ======================================================
+   5. アコーディオン
+====================================================== */
+
+.accordion-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.accordion-header {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+  border: none;
+  padding: 10px;
+  text-align: left;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.accordion-header:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.accordion-content {
+  display: none;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.accordion-item.active .accordion-content {
+  display: block;
+}
+
+/* ======================================================
+   6. 共通ボタン（トップUI用）
+====================================================== */
+
+.btn {
+  position: relative;
+  width: 320px;
+  padding: 18px 0;
+  margin: 10px 0;
+  border: none;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  background: #ffd9b3;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.btn:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(255, 183, 197, 1);
+}
+
+.btn.small {
+  width: 200px;
+  font-size: 16px;
+}
+
+/* ======================================================
+   7. 共通パネル系（必要時に使える補助）
+====================================================== */
+
+.surface-panel {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* ======================================================
+   8. スクロールバー（任意）
+====================================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ======================================================
+   9. レスポンシブ
+====================================================== */
+
+@media (max-width: 900px) {
+  .two-column {
+    flex-direction: column;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+    flex: unset;
+  }
+
+  .right-panel {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-left: 0;
+    padding-top: 16px;
+    max-height: none;
+  }
+
+  .visualizer-page {
+    padding: 18px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .center h1 {
+    font-size: 2.4rem;
+    letter-spacing: 0.06rem;
+  }
+
+  .center h2 {
+    font-size: 1.8rem;
+  }
+
+  .center p {
+    font-size: 1.05rem;
+    max-width: 88vw;
+  }
+
+  .btn {
+    width: min(320px, 84vw);
+  }
+}
+/* ======================================================
+   Page Transition Overlay
+   base.html の #page-transition-overlay 用
+====================================================== */
+
+#page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(80, 140, 255, 0.08),
+      transparent 30%
+    ),
+    linear-gradient(180deg, #020617 0%, #0b1120 100%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 99999;
+  transition: opacity 0.18s ease;
+}
+
+body.is-leaving #page-transition-overlay {
+  opacity: 1;
+}
+
+#page-ready-mask {
+  position: fixed;
+  inset: 0;
+  background: #020617;
+  z-index: 99998;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+body.is-ready #page-ready-mask {
+  opacity: 0;
+  pointer-events: none;
+}

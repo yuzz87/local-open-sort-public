@@ -1,0 +1,210 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sort_portfolio_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    defaults:
+      run:
+        working-directory: sort_game
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Show Python version
+        run: python --version
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-mysql-client g++ curl
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Show project structure
+        run: |
+          pwd
+          ls
+          ls docker/mysql/initdb
+
+      - name: Build C++ engine
+        run: |
+          g++ -std=c++17 cpp_engine/sort_engine.cpp cpp_engine/algorithms/*.cpp -O2 -o cpp_engine/sort_engine
+
+      - name: Wait for MySQL
+        run: |
+          until mysql -h 127.0.0.1 -P 3306 -u test_user -ptest_password -e "SELECT 1" sort_portfolio_test; do
+            echo "waiting for mysql..."
+            sleep 3
+          done
+
+      - name: Apply schema
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u test_user -ptest_password sort_portfolio_test < docker/mysql/initdb/01_schema.sql
+
+      - name: Apply seed
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u test_user -ptest_password sort_portfolio_test < docker/mysql/initdb/02_seed.sql
+
+      - name: Run pytest with coverage
+        env:
+          APP_ENV: testing
+          PYTHONPATH: .
+          SECRET_KEY: test-secret
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_NAME: sort_portfolio_test
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          RUN_BATTLE_ARRAY_SIZE_MAX: 10000
+          SAVE_BATTLE_BENCHMARK_SIZE_MAX: 10000
+        run: |
+          pytest --maxfail=1 --disable-warnings --cov=app --cov-report=term-missing --cov-report=xml
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: sort_game/coverage.xml
+
+      - name: Build Docker image
+        run: |
+          docker build -f docker/app/Dockerfile -t sort-game:test .
+
+      - name: Create .env for docker compose
+        run: |
+          cat > .env <<EOF
+          APP_ENV=testing
+          SECRET_KEY=test-secret
+          ALLOW_PUBLIC_SIGNUP=false
+          GUEST_SAVE_ENABLED=false
+          MYSQL_ROOT_PASSWORD=root
+          MYSQL_DATABASE=sort_portfolio_test
+          MYSQL_USER=test_user
+          MYSQL_PASSWORD=test_password
+          DB_HOST=db
+          DB_PORT=3306
+          DB_USER=test_user
+          DB_PASSWORD=test_password
+          DB_NAME=sort_portfolio_test
+          RUN_BATTLE_ARRAY_SIZE_MAX=10000
+          SAVE_BATTLE_BENCHMARK_SIZE_MAX=10000
+          EOF
+
+      - name: Reset docker compose stack
+        env:
+          APP_ENV: testing
+          SECRET_KEY: test-secret
+          ALLOW_PUBLIC_SIGNUP: false
+          GUEST_SAVE_ENABLED: false
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sort_portfolio_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          DB_HOST: db
+          DB_PORT: 3306
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          DB_NAME: sort_portfolio_test
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.local.yml down -v || true
+
+      - name: Validate docker compose config
+        env:
+          APP_ENV: testing
+          SECRET_KEY: test-secret
+          ALLOW_PUBLIC_SIGNUP: false
+          GUEST_SAVE_ENABLED: false
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sort_portfolio_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          DB_HOST: db
+          DB_PORT: 3306
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          DB_NAME: sort_portfolio_test
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.local.yml config
+
+      - name: Start app with docker compose
+        env:
+          APP_ENV: testing
+          SECRET_KEY: test-secret
+          ALLOW_PUBLIC_SIGNUP: false
+          GUEST_SAVE_ENABLED: false
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sort_portfolio_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          DB_HOST: db
+          DB_PORT: 3306
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          DB_NAME: sort_portfolio_test
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build db app nginx
+
+      - name: Wait for local stack
+        run: |
+          for i in {1..40}; do
+            if curl -f http://127.0.0.1:8080/health; then
+              exit 0
+            fi
+            echo "waiting for local stack..."
+            sleep 3
+          done
+          docker compose -f docker-compose.yml -f docker-compose.local.yml ps
+          docker compose -f docker-compose.yml -f docker-compose.local.yml logs --tail=100
+          exit 1
+
+      - name: Stop docker compose
+        if: always()
+        env:
+          APP_ENV: testing
+          SECRET_KEY: test-secret
+          ALLOW_PUBLIC_SIGNUP: false
+          GUEST_SAVE_ENABLED: false
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sort_portfolio_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+          DB_HOST: db
+          DB_PORT: 3306
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          DB_NAME: sort_portfolio_test
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.local.yml down -v

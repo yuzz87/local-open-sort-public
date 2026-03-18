@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sort Compare</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <div class="top-space"></div>
+
+    <div id="container">
+      <div class="algo" id="bubble">
+        <h3>バブルソート</h3>
+        <div class="board"></div>
+      </div>
+      <div class="algo" id="selection">
+        <h3>選択ソート</h3>
+        <div class="board"></div>
+      </div>
+      <div class="algo" id="insertion">
+        <h3>挿入ソート</h3>
+        <div class="board"></div>
+      </div>
+      <div class="algo" id="merge">
+        <h3>マージソート</h3>
+        <div class="board"></div>
+      </div>
+      <div class="algo" id="quick">
+        <h3>クイックソート</h3>
+        <div class="board"></div>
+      </div>
+      <div class="algo" id="heap">
+        <h3>ヒープソート</h3>
+        <div class="board"></div>
+      </div>
+    </div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

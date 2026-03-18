@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block title %}ゲーム選択{% endblock %} {% block
+body_class %}select-page{% endblock %} {% block head_extra %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/select.css') }}"
+/>
+{% endblock %} {% block content %}
+
+<div id="three-container"></div>
+
+<div class="select-ui">
+  <h2 class="title">GAME SELECT</h2>
+
+  <button class="menu-btn" onclick="location.href = '/game-a-Description'">
+    ソートアルゴリズムの可視化
+  </button>
+
+  <button
+    class="menu-btn"
+    onclick="location.href = '/game-b-Description/start'"
+  >
+    ソートアルゴリズム順位当てゲーム
+  </button>
+
+  <button class="menu-btn disabled">未実装</button>
+
+  <button class="menu-btn back" onclick="location.href = '/'">戻る</button>
+</div>
+
+{% endblock %} {% block scripts %}
+
+<script
+  type="module"
+  src="{{ url_for('static', filename='js/select.js') }}"
+></script>
+
+{% endblock %}

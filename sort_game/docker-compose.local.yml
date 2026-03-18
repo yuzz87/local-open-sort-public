@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: sort_db_local
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
+      - ./docker/mysql/my.conf:/etc/mysql/conf.d/my.cnf:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile.local
+    container_name: sort_app_local
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "g++ -std=c++17 cpp_engine/sort_engine.cpp cpp_engine/algorithms/*.cpp -O2 -o cpp_engine/sort_engine
+      && chmod +x cpp_engine/sort_engine
+      && python run.py"
+
+  nginx:
+    container_name: sort_nginx_local
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}ゲームB - ソートランキング{% endblock %}
+
+{% block head_extra %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/game_b.css') }}"
+/>
+{% endblock %}
+
+{% block body_class %}visualizer-page{% endblock %}
+
+{% block content %}
+
+<div class="howto-accordion">
+  <button class="howto-header" type="button">遊び方</button>
+  <div class="howto-content">
+    <ol>
+      <li>「ソート生成」で盤面を作成</li>
+      <li>速い順に 1位〜3位を予想</li>
+      <li>「開始」を押す</li>
+      <li>順位結果・保存済み履歴・統計を確認</li>
+    </ol>
+  </div>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<section class="game-b-header">
+  <h2>ソート順位当てゲーム</h2>
+  <p class="desc">
+    6つのソートアルゴリズムの速さを予想するゲームです。<br />
+    1位〜3位までを予想してください。
+  </p>
+</section>
+
+<section class="auth-panel">
+  <p id="authStatus" class="auth-status">Guest Mode</p>
+
+  <div class="auth-actions">
+    <a id="loginLink" href="/login" class="login-link">Login</a>
+
+    <button id="guestLoginBtn" type="button" class="guest-btn">
+      Guest User で試す
+    </button>
+
+    <button id="logoutBtn" type="button" class="logout-btn hidden">
+      Logout
+    </button>
+
+    <button id="saveBattleBtn" type="button" class="save-btn hidden">
+      保存
+    </button>
+  </div>
+
+  <p id="saveMessage" class="save-message"></p>
+  <p id="guestMessage" class="guest-message">
+    保存機能はログイン後に利用できます。
+  </p>
+</section>
+
+<section class="prediction-panel">
+  <h3>速い順にドラッグしてください</h3>
+
+  <div class="rank-slots">
+    <div class="slot" data-rank="1">🥇 1位</div>
+    <div class="slot" data-rank="2">🥈 2位</div>
+    <div class="slot" data-rank="3">🥉 3位</div>
+  </div>
+
+  <div class="algo-pool" id="algo-pool">
+    <!-- JSでアルゴリズムカードを生成 -->
+  </div>
+
+  <div id="prediction-result" class="prediction-result"></div>
+</section>
+
+<div class="battle-grid" id="battle-grid"></div>
+
+<div class="controls-center">
+  <button id="generate-board" type="button">ソート生成</button>
+  <button id="start-battle" type="button">開始</button>
+  <button type="button" onclick="location.href = '/select'">戻る</button>
+</div>
+
+<div class="records-accordion">
+  <button class="records-header" type="button">保存データを見る</button>
+
+  <div class="records-content">
+    <section class="records-section">
+      <div id="statistics"></div>
+    </section>
+
+    <section class="records-section">
+      <div id="battleHistory"></div>
+    </section>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sortSteps.js') }}"></script>
+<script src="{{ url_for('static', filename='js/save_battle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sort_ranking_gameB.js') }}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector(".howto-header")?.addEventListener("click", () => {
+      document.querySelector(".howto-accordion")?.classList.toggle("active");
+    });
+  });
+</script>
+{% endblock %}

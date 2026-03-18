@@ -1,0 +1,115 @@
+/* =========================================
+   Three Background
+========================================= */
+
+#three-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+/* =========================================
+   UI Layer
+========================================= */
+
+.title-ui {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  padding: 24px;
+  text-align: center;
+}
+
+/* =========================================
+   Title
+========================================= */
+
+.title {
+  font-size: 64px;
+  letter-spacing: 10px;
+  color: white;
+  font-weight: 300;
+  margin-bottom: 18px;
+  text-shadow:
+    0 0 10px rgba(150, 200, 255, 0.6),
+    0 0 30px rgba(120, 180, 255, 0.5),
+    0 0 80px rgba(100, 160, 255, 0.3);
+}
+
+.subtitle {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 32px;
+  letter-spacing: 2px;
+}
+
+/* =========================================
+   Action Buttons
+========================================= */
+
+.title-actions {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.start-btn,
+.login-btn {
+  min-width: 220px;
+  padding: 16px 32px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  font-weight: 300;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 0 20px rgba(120, 180, 255, 0.2);
+}
+
+.start-btn:hover,
+.login-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: rgba(255, 255, 255, 0.9);
+  color: #0b1e3c;
+  box-shadow:
+    0 0 30px rgba(180, 220, 255, 0.8),
+    0 0 60px rgba(100, 160, 255, 0.4);
+}
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 900px) {
+  .title {
+    font-size: 46px;
+    letter-spacing: 6px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .start-btn,
+  .login-btn {
+    min-width: 200px;
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+
+  .title-actions {
+    flex-direction: column;
+    gap: 14px;
+  }
+}

@@ -1,0 +1,71 @@
+# env
+.env
+.env.*
+!.env.example
+!.env.test.example
+
+# secrets / keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+certs/
+
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+venv/
+env/
+ENV/
+
+# build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# logs
+*.log
+logs/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/tasks.json
+.idea/
+
+# db / temp
+*.sqlite3
+*.db
+*.tmp
+*.swp
+
+# c++
+*.o
+*.obj
+*.out
+*.exe
+*.dll
+*.so
+*.a
+*.dylib
+cpp_engine/sort_engine
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+compile_commands.json
+
+# node
+node_modules/
+
+make_hash.py

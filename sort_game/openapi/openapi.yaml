@@ -1,0 +1,965 @@
+openapi: 3.0.3
+
+info:
+  title: Sort Portfolio API
+  version: 1.0.0
+  description: >
+    API specification for the sort algorithm visualization
+    and ranking application for local development.
+
+servers:
+  - url: /
+    description: Current local environment
+
+tags:
+  - name: Health
+  - name: Battles
+  - name: Statistics
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Returns application health status.
+      responses:
+        "200":
+          description: Health check success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
+
+  /api/run-battle:
+    post:
+      tags:
+        - Battles
+      summary: Run sorting benchmark
+      description: >
+        Executes the C++ sort engine and returns the ranking of the 6 supported
+        sorting algorithms by execution time.
+      operationId: runBattle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunBattleRequest"
+            examples:
+              success:
+                summary: Valid request
+                value:
+                  benchmark_size: 2000
+      responses:
+        "200":
+          description: Benchmark executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunBattleResponse"
+              examples:
+                success:
+                  summary: Benchmark success response
+                  value:
+                    success: true
+                    data:
+                      ranking:
+                        - algorithm: quick
+                          duration_ms: 0.058
+                          rank: 1
+                        - algorithm: merge
+                          duration_ms: 0.084
+                          rank: 2
+                        - algorithm: heap
+                          duration_ms: 0.110
+                          rank: 3
+                        - algorithm: insertion
+                          duration_ms: 0.286
+                          rank: 4
+                        - algorithm: selection
+                          duration_ms: 3.495
+                          rank: 5
+                        - algorithm: bubble
+                          duration_ms: 5.934
+                          rank: 6
+                    error: null
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                missing_benchmark_size:
+                  summary: Required field is missing
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_BENCHMARK_SIZE
+                      message: benchmark_size is required
+                invalid_integer:
+                  summary: Value is not an integer
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_BENCHMARK_SIZE
+                      message: benchmark_size must be int
+                out_of_range:
+                  summary: Value is outside allowed range
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_BENCHMARK_SIZE
+                      message: benchmark_size must be between 100 and 10000
+                invalid_json:
+                  summary: Request body is not valid JSON
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_JSON
+                      message: JSON body is required
+        "413":
+          description: Request payload too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                payload_too_large:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: PAYLOAD_TOO_LARGE
+                      message: Request body is too large
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                rate_limited:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: RATE_LIMITED
+                      message: Too many requests
+        "500":
+          description: Internal server error while executing the sort engine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                internal_error:
+                  summary: Unexpected internal error
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INTERNAL_ERROR
+                      message: Internal server error
+
+  /api/battles:
+    post:
+      tags:
+        - Battles
+      summary: Save battle result
+      description: >
+        Saves a sorting battle result into the database.
+        The request must include exactly 6 algorithm results.
+        user_id may be null for guest submissions.
+      operationId: createBattle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BattleCreateRequest"
+            examples:
+              success:
+                summary: Valid save request
+                value:
+                  user_id: null
+                  array_size: 40
+                  benchmark_size: 2000
+                  results:
+                    - algorithm: quick
+                      duration_ms: 0.058
+                      rank: 1
+                    - algorithm: merge
+                      duration_ms: 0.084
+                      rank: 2
+                    - algorithm: heap
+                      duration_ms: 0.110
+                      rank: 3
+                    - algorithm: insertion
+                      duration_ms: 0.286
+                      rank: 4
+                    - algorithm: selection
+                      duration_ms: 3.495
+                      rank: 5
+                    - algorithm: bubble
+                      duration_ms: 5.934
+                      rank: 6
+      responses:
+        "201":
+          description: Battle result saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BattleCreateResponse"
+              examples:
+                success:
+                  summary: Save success response
+                  value:
+                    success: true
+                    data:
+                      battle_id: 1
+                    error: null
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalid_payload:
+                  summary: Payload must be an object
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_INPUT
+                      message: payload must be an object
+                invalid_user_id:
+                  summary: user_id is invalid
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_USER_ID
+                      message: user_id must be int or null
+                invalid_array_size:
+                  summary: array_size is outside allowed range
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_ARRAY_SIZE
+                      message: array_size must be between 5 and 100
+                invalid_benchmark_size:
+                  summary: benchmark_size is outside allowed range
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_BENCHMARK_SIZE
+                      message: benchmark_size must be between 100 and 10000
+                results_not_array:
+                  summary: results is not an array
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_RESULTS
+                      message: results must be an array
+                results_invalid_count:
+                  summary: results must contain exactly 6 items
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_RESULTS
+                      message: results must contain exactly 6 items
+                invalid_algorithm:
+                  summary: algorithm is invalid
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_ALGORITHM
+                      message: results[0].algorithm is invalid
+                invalid_duration:
+                  summary: duration must be finite and non-negative
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_DURATION
+                      message: results[0].duration_ms must be finite and >= 0
+                duplicate_rank:
+                  summary: rank is duplicated
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: DUPLICATE_RANK
+                      message: rank must be unique
+                duplicate_algorithm:
+                  summary: algorithm is duplicated
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: DUPLICATE_ALGORITHM
+                      message: algorithm must be unique
+                invalid_rank_range:
+                  summary: rank is outside allowed range
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_RANK
+                      message: results[5].rank must be between 1 and 6
+        "413":
+          description: Request payload too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                payload_too_large:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: PAYLOAD_TOO_LARGE
+                      message: Request body is too large
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                rate_limited:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: RATE_LIMITED
+                      message: Too many requests
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                internal_error:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INTERNAL_ERROR
+                      message: Internal server error
+
+    get:
+      tags:
+        - Battles
+      summary: Get recent battle history
+      description: >
+        Returns recent saved battle results from the database.
+        Results are returned as a flat array of battle result rows.
+      operationId: listBattles
+      parameters:
+        - $ref: "#/components/parameters/LimitBattles"
+      responses:
+        "200":
+          description: Battle history retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BattleListResponse"
+              examples:
+                success:
+                  summary: Recent battles fetched successfully
+                  value:
+                    success: true
+                    data:
+                      - algorithm: quick
+                        array_size: 40
+                        battle_id: 38
+                        benchmark_size: 2000
+                        created_at: "2026-03-08T12:49:53Z"
+                        duration_ms: 0.058
+                        rank: 1
+                        status: COMPLETED
+                        user_id: null
+                      - algorithm: merge
+                        array_size: 40
+                        battle_id: 38
+                        benchmark_size: 2000
+                        created_at: "2026-03-08T12:49:53Z"
+                        duration_ms: 0.084
+                        rank: 2
+                        status: COMPLETED
+                        user_id: null
+                    error: null
+        "400":
+          description: Invalid query parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalid_integer:
+                  summary: limit is not an integer
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_LIMIT
+                      message: limit must be int
+                out_of_range:
+                  summary: limit is outside allowed range
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_LIMIT
+                      message: limit must be between 1 and 50
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                rate_limited:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: RATE_LIMITED
+                      message: Too many requests
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                internal_error:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INTERNAL_ERROR
+                      message: Internal server error
+
+  /api/statistics:
+    get:
+      tags:
+        - Statistics
+      summary: Get battle statistics
+      description: >
+        Returns aggregated statistics for recent battles.
+        Statistics are grouped by algorithm name.
+      operationId: getStatistics
+      parameters:
+        - $ref: "#/components/parameters/LimitStatistics"
+      responses:
+        "200":
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatisticsResponse"
+              examples:
+                success:
+                  summary: Statistics fetched successfully
+                  value:
+                    success: true
+                    data:
+                      bubble:
+                        avg_duration_ms: 5.934
+                        plays: 10
+                        win_rate: 0
+                        wins: 0
+                        rank_1: 0
+                        rank_2: 0
+                        rank_3: 0
+                      selection:
+                        avg_duration_ms: 3.495
+                        plays: 10
+                        win_rate: 0
+                        wins: 0
+                        rank_1: 0
+                        rank_2: 0
+                        rank_3: 0
+                      insertion:
+                        avg_duration_ms: 0.286
+                        plays: 10
+                        win_rate: 0
+                        wins: 0
+                        rank_1: 0
+                        rank_2: 0
+                        rank_3: 0
+                      merge:
+                        avg_duration_ms: 0.084
+                        plays: 10
+                        win_rate: 0
+                        wins: 0
+                        rank_1: 0
+                        rank_2: 10
+                        rank_3: 0
+                      quick:
+                        avg_duration_ms: 0.058
+                        plays: 10
+                        win_rate: 1
+                        wins: 10
+                        rank_1: 10
+                        rank_2: 0
+                        rank_3: 0
+                      heap:
+                        avg_duration_ms: 0.110
+                        plays: 10
+                        win_rate: 0
+                        wins: 0
+                        rank_1: 0
+                        rank_2: 0
+                        rank_3: 10
+                    error: null
+        "400":
+          description: Invalid query parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalid_integer:
+                  summary: limit is not an integer
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_LIMIT
+                      message: limit must be int
+                out_of_range:
+                  summary: limit is outside allowed range
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INVALID_LIMIT
+                      message: limit must be between 1 and 1000
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                rate_limited:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: RATE_LIMITED
+                      message: Too many requests
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                internal_error:
+                  value:
+                    success: false
+                    data: null
+                    error:
+                      code: INTERNAL_ERROR
+                      message: Internal server error
+
+components:
+  parameters:
+    LimitBattles:
+      name: limit
+      in: query
+      required: false
+      description: Number of recent battles to retrieve.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 10
+
+    LimitStatistics:
+      name: limit
+      in: query
+      required: false
+      description: Number of recent battles to include in the statistics.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 10
+
+  schemas:
+    ErrorDetail:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: Invalid request
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - data
+        - error
+      properties:
+        success:
+          type: boolean
+          enum: [false]
+          example: false
+        data:
+          nullable: true
+          example: null
+        error:
+          $ref: "#/components/schemas/ErrorDetail"
+
+    RunBattleRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - benchmark_size
+      properties:
+        benchmark_size:
+          type: integer
+          minimum: 100
+          maximum: 10000
+          description: Size of the benchmark array passed to the C++ engine.
+          example: 2000
+
+    RankingItem:
+      type: object
+      additionalProperties: false
+      required:
+        - algorithm
+        - duration_ms
+        - rank
+      properties:
+        algorithm:
+          type: string
+          enum:
+            - bubble
+            - selection
+            - insertion
+            - merge
+            - quick
+            - heap
+          example: quick
+        duration_ms:
+          type: number
+          format: double
+          minimum: 0
+          example: 0.058
+        rank:
+          type: integer
+          minimum: 1
+          maximum: 6
+          example: 1
+
+    RunBattleResponseData:
+      type: object
+      additionalProperties: false
+      required:
+        - ranking
+      properties:
+        ranking:
+          type: array
+          minItems: 6
+          maxItems: 6
+          items:
+            $ref: "#/components/schemas/RankingItem"
+
+    RunBattleResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - data
+        - error
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+          example: true
+        data:
+          $ref: "#/components/schemas/RunBattleResponseData"
+        error:
+          nullable: true
+          example: null
+
+    BattleResultInput:
+      type: object
+      additionalProperties: false
+      required:
+        - algorithm
+        - duration_ms
+        - rank
+      properties:
+        algorithm:
+          type: string
+          enum:
+            - bubble
+            - selection
+            - insertion
+            - merge
+            - quick
+            - heap
+          example: quick
+        duration_ms:
+          type: number
+          format: double
+          minimum: 0
+          example: 0.058
+        rank:
+          type: integer
+          minimum: 1
+          maximum: 6
+          example: 1
+
+    BattleCreateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - array_size
+        - benchmark_size
+        - results
+      properties:
+        user_id:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: User ID. Null is allowed for guest save.
+          example: null
+        array_size:
+          type: integer
+          minimum: 5
+          maximum: 100
+          description: Array size used for the visualizer.
+          example: 40
+        benchmark_size:
+          type: integer
+          minimum: 100
+          maximum: 10000
+          description: Array size used for benchmark execution.
+          example: 2000
+        results:
+          type: array
+          minItems: 6
+          maxItems: 6
+          description: Exactly 6 sorting results must be provided.
+          items:
+            $ref: "#/components/schemas/BattleResultInput"
+
+    BattleCreateResponseData:
+      type: object
+      additionalProperties: false
+      required:
+        - battle_id
+      properties:
+        battle_id:
+          type: integer
+          minimum: 1
+          example: 1
+
+    BattleCreateResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - data
+        - error
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+          example: true
+        data:
+          $ref: "#/components/schemas/BattleCreateResponseData"
+        error:
+          nullable: true
+          example: null
+
+    BattleListItem:
+      type: object
+      additionalProperties: false
+      required:
+        - algorithm
+        - array_size
+        - battle_id
+        - benchmark_size
+        - created_at
+        - duration_ms
+        - rank
+        - status
+        - user_id
+      properties:
+        algorithm:
+          type: string
+          enum:
+            - bubble
+            - selection
+            - insertion
+            - merge
+            - quick
+            - heap
+          example: quick
+        array_size:
+          type: integer
+          minimum: 5
+          maximum: 100
+          example: 40
+        battle_id:
+          type: integer
+          minimum: 1
+          example: 38
+        benchmark_size:
+          type: integer
+          minimum: 100
+          maximum: 10000
+          example: 2000
+        created_at:
+          type: string
+          format: date-time
+          example: "2026-03-08T12:49:53Z"
+        duration_ms:
+          type: number
+          format: double
+          minimum: 0
+          example: 0.058
+        rank:
+          type: integer
+          minimum: 1
+          maximum: 6
+          example: 1
+        status:
+          type: string
+          enum:
+            - COMPLETED
+          example: COMPLETED
+        user_id:
+          type: integer
+          nullable: true
+          minimum: 1
+          example: null
+
+    BattleListResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - data
+        - error
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+          example: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/BattleListItem"
+        error:
+          nullable: true
+          example: null
+
+    AlgorithmStatistics:
+      type: object
+      additionalProperties: false
+      required:
+        - avg_duration_ms
+        - plays
+        - win_rate
+        - wins
+        - rank_1
+        - rank_2
+        - rank_3
+      properties:
+        avg_duration_ms:
+          type: number
+          minimum: 0
+          example: 0.058
+        plays:
+          type: integer
+          minimum: 0
+          example: 100
+        win_rate:
+          type: number
+          minimum: 0
+          maximum: 1
+          example: 0.53
+        wins:
+          type: integer
+          minimum: 0
+          example: 53
+        rank_1:
+          type: integer
+          minimum: 0
+          example: 53
+        rank_2:
+          type: integer
+          minimum: 0
+          example: 30
+        rank_3:
+          type: integer
+          minimum: 0
+          example: 17
+
+    StatisticsResponseData:
+      type: object
+      additionalProperties: false
+      properties:
+        bubble:
+          $ref: "#/components/schemas/AlgorithmStatistics"
+        selection:
+          $ref: "#/components/schemas/AlgorithmStatistics"
+        insertion:
+          $ref: "#/components/schemas/AlgorithmStatistics"
+        merge:
+          $ref: "#/components/schemas/AlgorithmStatistics"
+        quick:
+          $ref: "#/components/schemas/AlgorithmStatistics"
+        heap:
+          $ref: "#/components/schemas/AlgorithmStatistics"
+
+    StatisticsResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - data
+        - error
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+          example: true
+        data:
+          $ref: "#/components/schemas/StatisticsResponseData"
+        error:
+          nullable: true
+          example: null

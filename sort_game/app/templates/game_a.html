@@ -1,0 +1,138 @@
+{% extends "base.html" %} {% block title %}ソート可視化{% endblock %} {% block
+head_extra %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/style.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/game_a.css') }}"
+/>
+{% endblock %} {% block body_class %}visualizer-page{% endblock %} {% block
+content %}
+<main class="two-column">
+  <!-- 左側 -->
+  <div class="left-panel">
+    <div class="page-head">
+      <h1>ソート可視化</h1>
+
+      <button type="button" onclick="location.href = '/game-a-Description'">
+        戻る
+      </button>
+    </div>
+
+    <section class="controls">
+      <label>
+        アルゴリズム
+        <select id="algorithm-input">
+          <option value="bubble">バブルソート</option>
+          <option value="selection">選択ソート</option>
+          <option value="insertion">挿入ソート</option>
+          <option value="merge">マージソート</option>
+          <option value="quick">クイックソート</option>
+          <option value="heap">ヒープソート</option>
+        </select>
+      </label>
+
+      <label>
+        枚数 N
+        <input id="count-input" type="number" value="13" min="5" max="50" />
+      </label>
+
+      <label>
+        速度
+        <input
+          id="speed-input"
+          type="range"
+          min="0.2"
+          max="3"
+          step="0.1"
+          value="1"
+        />
+        <span id="speed-value">1.0x</span>
+      </label>
+
+      <button id="start-btn" type="button">開始</button>
+      <button id="pause-btn" type="button">一時停止</button>
+      <button id="reset-btn" type="button">リセット</button>
+    </section>
+
+    <section id="board" class="board-absolute"></section>
+
+    <p class="legend">
+      <span class="badge split">注目範囲</span>
+      <span class="badge compare">比較中</span>
+      <span class="badge move">移動中</span>
+      <span class="badge finalize">確定</span>
+    </p>
+  </div>
+
+  <!-- 右側 -->
+  <aside class="right-panel">
+    <h2>アルゴリズム解説</h2>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header" type="button">バブルソート</button>
+        <div class="accordion-content">
+          隣接する要素を比較し、順序が逆なら交換する。<br />
+          計算量：O(n²)
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" type="button">選択ソート</button>
+        <div class="accordion-content">
+          未整列部分から最小値を選び、先頭と交換する。<br />
+          計算量：O(n²)
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" type="button">挿入ソート</button>
+        <div class="accordion-content">
+          整列済み部分に値を挿入していく。<br />
+          計算量：O(n²)
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" type="button">マージソート</button>
+        <div class="accordion-content">
+          分割統治法。配列を分割し統合する。<br />
+          計算量：O(n log n)
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" type="button">クイックソート</button>
+        <div class="accordion-content">
+          ピボットを基準に分割して整列する。<br />
+          平均：O(n log n)、最悪：O(n²)
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" type="button">ヒープソート</button>
+        <div class="accordion-content">
+          ヒープ構造を利用して整列する。<br />
+          計算量：O(n log n)
+        </div>
+      </div>
+    </div>
+  </aside>
+</main>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='js/sortSteps.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sort_view_gameA.js') }}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".accordion-header").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        btn.parentElement.classList.toggle("active");
+      });
+    });
+  });
+</script>
+{% endblock %}

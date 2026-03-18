@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#020617" />
+
+    <title>{% block title %}Portfolio{% endblock %}</title>
+
+    <!-- 白フラッシュ対策：外部CSSより先に適用 -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background: #020617;
+        color: #ffffff;
+      }
+
+      body {
+        font-family: sans-serif;
+      }
+
+      #app-root {
+        min-height: 100vh;
+        background: #020617;
+      }
+
+      /* ページ読み込み完了までの暗幕 */
+      #page-ready-mask {
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            circle at 30% 20%,
+            rgba(80, 140, 255, 0.08),
+            transparent 30%
+          ),
+          linear-gradient(180deg, #020617 0%, #0b1120 100%);
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 99998;
+        transition: opacity 0.25s ease;
+      }
+
+      body.is-ready #page-ready-mask {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* ページ離脱時の暗いオーバーレイ */
+      #page-transition-overlay {
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            circle at 30% 20%,
+            rgba(80, 140, 255, 0.08),
+            transparent 30%
+          ),
+          linear-gradient(180deg, #020617 0%, #0b1120 100%);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 99999;
+        transition: opacity 0.18s ease;
+      }
+
+      body.is-leaving #page-transition-overlay {
+        opacity: 1;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    {% block head_extra %}{% endblock %}
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    <div id="page-ready-mask"></div>
+    <div id="page-transition-overlay"></div>
+
+    <div id="app-root">{% block content %}{% endblock %}</div>
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const overlayClass = "is-leaving";
+
+        document.querySelectorAll("a[href]").forEach((link) => {
+          link.addEventListener("click", (event) => {
+            const href = link.getAttribute("href");
+
+            if (!href) return;
+            if (href.startsWith("#")) return;
+            if (link.target === "_blank") return;
+            if (
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            )
+              return;
+            if (link.hasAttribute("download")) return;
+
+            document.body.classList.add(overlayClass);
+          });
+        });
+
+        document
+          .querySelectorAll("[data-transition-href]")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              const href = button.getAttribute("data-transition-href");
+              if (!href) return;
+
+              document.body.classList.add(overlayClass);
+
+              setTimeout(() => {
+                window.location.href = href;
+              }, 120);
+            });
+          });
+
+        window.addEventListener("pageshow", () => {
+          document.body.classList.remove(overlayClass);
+        });
+      });
+
+      window.addEventListener("load", () => {
+        document.body.classList.add("is-ready");
+      });
+    </script>
+  </body>
+</html>

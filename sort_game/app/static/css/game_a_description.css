@@ -1,0 +1,221 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #020617;
+  color: #ffffff;
+}
+
+body {
+  font-family: sans-serif;
+  overflow-x: hidden;
+}
+#app-root {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(80, 140, 255, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(120, 180, 255, 0.1),
+      transparent 35%
+    ),
+    linear-gradient(180deg, #020617 0%, #0b1120 50%, #0f172a 100%);
+}
+
+#three-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(100, 160, 255, 0.1),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 70% 75%,
+      rgba(120, 180, 255, 0.08),
+      transparent 35%
+    ),
+    linear-gradient(180deg, #020617 0%, #0b1120 55%, #0f172a 100%);
+}
+
+#three-container canvas {
+  display: block;
+}
+
+/* =========================================
+   Page Layout
+========================================= */
+
+.center {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 25px;
+  color: white;
+  z-index: 2;
+  position: relative;
+  background: transparent;
+}
+
+.center-ui {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  z-index: 2;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   Title
+========================================= */
+
+.center h2 {
+  margin: 0;
+  font-size: 48px;
+  letter-spacing: 8px;
+  font-weight: 300;
+  text-shadow:
+    0 0 10px rgba(150, 200, 255, 0.6),
+    0 0 30px rgba(120, 180, 255, 0.5),
+    0 0 80px rgba(100, 160, 255, 0.3);
+}
+
+/* =========================================
+   Description Text
+========================================= */
+
+.center p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.8;
+  max-width: 600px;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* =========================================
+   Button
+========================================= */
+
+.btn {
+  padding: 14px 50px;
+  font-size: 16px;
+  letter-spacing: 3px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  cursor: pointer;
+  transition:
+    transform 0.35s ease,
+    background 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 0 20px rgba(120, 180, 255, 0.2);
+}
+
+/* Hover */
+
+.btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: rgba(255, 255, 255, 0.92);
+  color: #0b1e3c;
+  box-shadow:
+    0 0 30px rgba(180, 220, 255, 0.8),
+    0 0 60px rgba(100, 160, 255, 0.4);
+}
+
+/* Focus */
+
+.btn:focus-visible {
+  outline: 2px solid rgba(180, 220, 255, 0.95);
+  outline-offset: 4px;
+}
+
+/* =========================================
+   Small Button
+========================================= */
+
+.small {
+  width: 200px;
+}
+
+/* =========================================
+   Optional subtle fade
+   遷移時の違和感を少し和らげる
+========================================= */
+
+.center-ui {
+  animation: pageFadeIn 0.22s ease;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0.96;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 900px) {
+  .center h2 {
+    font-size: 36px;
+    letter-spacing: 6px;
+  }
+
+  .center p {
+    font-size: 16px;
+  }
+
+  .btn {
+    padding: 12px 35px;
+  }
+}
+
+@media (max-width: 640px) {
+  .center-ui {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .center h2 {
+    font-size: 30px;
+    letter-spacing: 4px;
+  }
+
+  .center p {
+    max-width: 88vw;
+    line-height: 1.7;
+  }
+
+  .btn {
+    width: min(280px, 84vw);
+  }
+
+  .small {
+    width: min(200px, 70vw);
+  }
+}

@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% block head_extra %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/title.css') }}"
+/>
+{% endblock %} {% block content %}
+<div id="three-container"></div>
+
+<div class="title-ui">
+  <h1 class="title">SORT GAME</h1>
+  <p class="subtitle">ソートアルゴリズム Web アプリ</p>
+
+  <div class="title-actions">
+    <button class="start-btn" type="button" onclick="handleGuestStart()">
+      Guestで試す
+    </button>
+
+    <button class="login-btn" type="button" onclick="location.href = '/login'">
+      User Login
+    </button>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+
+<script>
+  function handleGuestStart() {
+    if (typeof startGuestMode === "function") {
+      startGuestMode();
+    } else if (typeof clearAuth === "function") {
+      clearAuth();
+    }
+
+    window.location.href = "/select";
+  }
+</script>
+
+<script
+  type="module"
+  src="{{ url_for('static', filename='js/title.js') }}"
+></script>
+{% endblock %}
