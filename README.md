@@ -221,45 +221,31 @@ Docker Desktop が起動しているか確認してください。
 - CSS
 - JavaScript
 
----
-
 ## バックエンド
 
 - Python
 - Flask
 
----
-
 ## ソート処理
 
 - C++
 
----
-
 ## データベース
 
 - MySQL 8
-
----
 
 ## 開発環境・コンテナ
 
 - Docker
 - Docker Compose
 
----
-
 ## テスト
 
 - pytest
 
----
-
 ## CI
 
 - GitHub Actions
-
----
 
 ## 開発補助
 
