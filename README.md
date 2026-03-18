@@ -1,0 +1,2 @@
+# local-open-sort-public
+HTTPS化したWebアプリケーションをlocal環境で誰でも使用できるようにしました
